@@ -38,7 +38,8 @@ resource "aws_cloudfront_distribution" "frontend_distribution" {
   }
   
   ordered_cache_behavior {
-    path_pattern     = "/api/*"
+    //TODO Add custom domain mapping to avoid using pattern /prod/api/
+    path_pattern     = "/prod/api/*"
     cached_methods   = ["HEAD", "GET", "OPTIONS"]
     allowed_methods  = ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"]
     target_origin_id = "APIGatewayBackend"

@@ -41,7 +41,7 @@ export default defineComponent({
 
         const handleSubmit = async () => {
             try {
-                const response = await axios.post('/api/contact-us', formData.value);
+                const response = await axios.post('/prod/api/contact-us', formData.value);
                 responseMessage.value = 'Your message has been sent successfully!';
                 // Optionally clear the form after submission
                 formData.value = {

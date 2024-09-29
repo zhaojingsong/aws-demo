@@ -5,7 +5,8 @@ resource "aws_lambda_function" "backend_lambda" {
   runtime       = "nodejs20.x"
 
   s3_bucket = aws_s3_bucket.lambda_bucket.bucket
-  s3_key    = "lambda-backend.zip" # This path should be where the zip file is uploaded in S3
+  s3_key    = "lambda-backend.zip" 
+  source_code_hash = data.aws_s3_bucket_object.latest_lambda_code.etag
 
 
   environment {
@@ -15,6 +16,10 @@ resource "aws_lambda_function" "backend_lambda" {
   }
   layers     = [aws_lambda_layer_version.nodejs_layer.arn]
   depends_on = [null_resource.upload_lambda]
+}
+data "aws_s3_bucket_object" "latest_lambda_code" {
+  bucket = aws_s3_bucket.lambda_bucket.id
+  key    = "lambda-backend.zip" 
 }
 
 resource "aws_lambda_layer_version" "nodejs_layer" {

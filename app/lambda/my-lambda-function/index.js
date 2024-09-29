@@ -2,6 +2,9 @@ const AWS = require('aws-sdk');
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
 exports.handler = async (event) => {
+    console.log(event)
+    console.log(event)
+
     const id = event.id; // Get the ID from the path parameters
     const params = {
         TableName: process.env.DYNAMODB_TABLE, // Use the DynamoDB table name from environment variables
