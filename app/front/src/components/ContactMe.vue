@@ -17,7 +17,7 @@
                 <label for="message">Message:</label>
                 <textarea v-model="formData.message" required></textarea>
             </div>
-            <button type="submit">Send</button>
+            <button type="submit" :disabled="isSubmitted">Send</button>
         </form>
         <div v-if="responseMessage" class="response-message">{{ responseMessage }}</div>
     </div>
@@ -36,14 +36,15 @@ export default defineComponent({
             telephone: '',
             message: ''
         });
+        var isSubmitted = ref(false);
 
         const responseMessage = ref('');
 
         const handleSubmit = async () => {
             try {
-                const response = await axios.post('/prod/api/contact-us', formData.value);
+                isSubmitted.value = true
+                await axios.post('/prod/api/contact-us', formData.value);
                 responseMessage.value = 'Your message has been sent successfully!';
-                // Optionally clear the form after submission
                 formData.value = {
                     name: '',
                     email: '',
@@ -59,7 +60,8 @@ export default defineComponent({
         return {
             formData,
             handleSubmit,
-            responseMessage
+            responseMessage,
+            isSubmitted
         };
     }
 });
@@ -101,7 +103,12 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+button:disabled {
+    background-color: grey;
+    cursor: not-allowed;
+}
+
+button:not(:disabled):hover {
     background-color: #0056b3;
 }
 

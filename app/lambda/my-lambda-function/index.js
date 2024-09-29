@@ -1,36 +1,49 @@
-const AWS = require('aws-sdk');
+const AWS = require("aws-sdk");
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
+const uuid = require('uuid');
 
 exports.handler = async (event) => {
-    console.log(event)
-    console.log(event)
+  try {
+    const { name, email, telephone, message } = JSON.parse(event.body);
 
-    const id = event.id; // Get the ID from the path parameters
-    const params = {
-        TableName: process.env.DYNAMODB_TABLE, // Use the DynamoDB table name from environment variables
-        Key: {
-            id: id
-        }
+    if (!name || !email || !telephone || !message) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "All fields are required" }),
+      };
+    }
+
+    const keyId = uuid.v4();
+
+    const item = {
+      id: keyId,
+      name,
+      email,
+      telephone,
+      message,
     };
 
-    try {
-        const data = await dynamoDB.get(params).promise();
-        
-        if (!data.Item) {
-            return {
-                statusCode: 404,
-                body: JSON.stringify({ message: 'Item not found' }),
-            };
-        }
+    const params = {
+      TableName: process.env.DYNAMODB_TABLE,
+      Item: item,
+    };
 
-        return {
-            statusCode: 200,
-            body: JSON.stringify(data.Item),
-        };
-    } catch (error) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: 'Could not fetch item' }),
-        };
-    }
+    await dynamoDB.put(params).promise();
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: "Data inserted successfully",
+        id: keyId,
+      }),
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: "An error occurred while processing your request",
+      }),
+    };
+  }
 };
