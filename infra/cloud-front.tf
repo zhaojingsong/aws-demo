@@ -1,4 +1,6 @@
 resource "aws_cloudfront_distribution" "frontend_distribution" {
+  aliases = [var.domain_name]
+
   restrictions {
     geo_restriction {
       restriction_type = "whitelist"
@@ -18,7 +20,7 @@ resource "aws_cloudfront_distribution" "frontend_distribution" {
       http_port              = 80
       https_port             = 443
       origin_protocol_policy = "https-only"
-      origin_ssl_protocols = ["TLSv1.2"]
+      origin_ssl_protocols   = ["TLSv1.2"]
     }
   }
 
@@ -36,7 +38,7 @@ resource "aws_cloudfront_distribution" "frontend_distribution" {
 
     viewer_protocol_policy = "redirect-to-https"
   }
-  
+
   ordered_cache_behavior {
     //TODO Add custom domain mapping to avoid using pattern /prod/api/
     path_pattern     = "/prod/api/*"
@@ -58,13 +60,16 @@ resource "aws_cloudfront_distribution" "frontend_distribution" {
   default_root_object = "index.html"
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = aws_acm_certificate.jingsong_cert.arn
+    ssl_support_method        = "sni-only"
+    minimum_protocol_version  = "TLSv1.2_2019"
   }
 }
 
 resource "aws_cloudfront_origin_access_control" "oac" {
-  name                            = "MyCloudFrontOAC"
+  name                              = "MyCloudFrontOAC"
   origin_access_control_origin_type = "s3"
-  signing_behavior                = "always"
-  signing_protocol                = "sigv4"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
 }
+

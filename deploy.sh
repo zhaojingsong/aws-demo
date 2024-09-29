@@ -59,7 +59,7 @@ main() {
     package_lambda_function
     package_lambda_layer
     apply_terraform
-    clean_up
+    #clean_up
     echo "Script completed successfully."
 }
 
