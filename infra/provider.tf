@@ -7,12 +7,21 @@ terraform {
   }
 }
 
-# Configure the AWS Provider
 provider "aws" {
   region = "eu-west-1"
   default_tags {
+    tags = {
+      Owner        = "Jingsong"
+      Project     = "aws-demo"
+    }
+  }
+}
 
 
+provider "aws" {
+  alias = "virginia"
+  region = "us-east-1"
+  default_tags {
     tags = {
       Owner        = "Jingsong"
       Project     = "aws-demo"

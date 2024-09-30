@@ -60,7 +60,7 @@ resource "aws_cloudfront_distribution" "frontend_distribution" {
   default_root_object = "index.html"
 
   viewer_certificate {
-    acm_certificate_arn      = aws_acm_certificate.jingsong_cert.arn
+    acm_certificate_arn      = aws_acm_certificate.domain_cert.arn
     ssl_support_method        = "sni-only"
     minimum_protocol_version  = "TLSv1.2_2019"
   }
