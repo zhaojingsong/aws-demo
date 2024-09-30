@@ -1,11 +1,11 @@
 resource "aws_lambda_function" "backend_lambda" {
   function_name = "backend-function"
   role          = aws_iam_role.lambda_exec_role.arn
-  handler       = "index.handler"
+  handler       = "index.lambdaHandler"
   runtime       = "nodejs20.x"
 
   s3_bucket = aws_s3_bucket.lambda_bucket.bucket
-  s3_key    = "lambda-backend.zip" 
+  s3_key    = var.lambda_package 
   source_code_hash = data.aws_s3_bucket_object.latest_lambda_code.etag
 
 
@@ -14,20 +14,12 @@ resource "aws_lambda_function" "backend_lambda" {
       DYNAMODB_TABLE = aws_dynamodb_table.my_table.name
     }
   }
-  layers     = [aws_lambda_layer_version.nodejs_layer.arn]
   depends_on = [null_resource.upload_lambda]
 }
+
 data "aws_s3_bucket_object" "latest_lambda_code" {
   bucket = aws_s3_bucket.lambda_bucket.id
-  key    = "lambda-backend.zip" 
-}
-
-resource "aws_lambda_layer_version" "nodejs_layer" {
-  layer_name          = "NodeJsSdkLayer"
-  description         = "Node.js SDK Layer for Lambda"
-  compatible_runtimes = ["nodejs20.x"]
-  source_code_hash    = filebase64sha256("../app/lambda/packages/nodejs.zip")
-  filename = "../app/lambda/packages/nodejs.zip"
+  key    = var.lambda_package
 }
 
 
@@ -60,7 +52,7 @@ resource "aws_iam_role_policy_attachment" "lambda_logging" {
 
 resource "null_resource" "upload_lambda" {
   provisioner "local-exec" {
-    command = "aws s3 cp ../app/lambda/packages/lambda-backend.zip s3://${aws_s3_bucket.lambda_bucket.bucket}/lambda-backend.zip"
+    command = "aws s3 cp ../app/lambda/typescript-lambda/dist/${var.lambda_package} s3://${aws_s3_bucket.lambda_bucket.bucket}/${var.lambda_package}"
   }
 
   triggers = {

@@ -16,24 +16,9 @@ package_vue_project() {
 
 package_lambda_function() {
     echo "Packaging Lambda function..."
-    cd app/lambda/my-lambda-function
+    cd app/lambda/typescript-lambda
 
-    mkdir -p ../packages/
-    zip -r ../packages/lambda-backend.zip . -x "node_modules/*"
-    cd -
-}
-
-package_lambda_layer() {
-
-    echo "Packaging Node.js dependencies..."
-    cd app/lambda/my-lambda-function 
-
-    npm install
-
-    mkdir -p nodejs
-    cp -rf node_modules nodejs/node_modules
-    zip -r ../packages/nodejs.zip nodejs
-    rm -rf nodejs
+    npm run build
     cd -
 }
 
@@ -49,7 +34,7 @@ apply_terraform() {
 
 clean_up() {
     echo "Cleaning up generated files..."
-    rm -rf app/lambda/packages
+    rm -rf app/lambda/typescript-lambda/dist
     rm -rf dist
 }
 
@@ -57,9 +42,8 @@ clean_up() {
 main() {
     package_vue_project
     package_lambda_function
-    package_lambda_layer
     apply_terraform
-    #clean_up
+    clean_up
     echo "Script completed successfully."
 }
 

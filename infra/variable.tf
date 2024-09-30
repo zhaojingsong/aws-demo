@@ -5,3 +5,7 @@ variable "aws_region" {
 variable "domain_name" {
   default =  "jingsong.fr"
 }
+
+variable "lambda_package" {
+  default = "lambda.zip"
+}
