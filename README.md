@@ -1,6 +1,6 @@
 # aws-demo
-A demo project to test the technical stack in AWS
-
+A demo project to test the technical stack on AWS, including Route 53, API Gateway, CloudFront, S3 website hosting, and serverless Lambda functions.
+![My Image](readme/aws-diagrame.png)
 
 # Prerequisite
 ## Dependency: 
@@ -10,7 +10,7 @@ A demo project to test the technical stack in AWS
  - Typescrpt v5.4.0
 
 # Deployment
- - Create a s3 bucket to store the tfstate file of terraform. Change corresponding configuration in the backend.tf
- - Create an custom domaine name. Change corresponding configuration in variable.tf
- - Configure credentials for programmatic access for the AWS CLI,
- - Run the script deploy.sh
+ - Create an S3 bucket to store the Terraform tfstate file and update the configuration in backend.tf accordingly.
+ - Create a custom domain name and modify the corresponding configuration in variable.tf.
+ - Configure credentials for programmatic access via the AWS CLI.
+ - Run the script deploy.sh.
