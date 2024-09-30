@@ -2,13 +2,13 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import AWS from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
 
-const dynamoDB = new AWS.DynamoDB.DocumentClient();
+const dynamoDBClient = new AWS.DynamoDB.DocumentClient();
 const sns = new AWS.SNS();
 
-const tableName = process.env.DYNAMODB_TABLE as string;
+const dynamoDBTableName = process.env.DYNAMODB_TABLE as string;
 const snsTopicArn = process.env.SNS_TOPIC_ARN as string;
 
-interface Item {
+interface DynamoDBItem {
     id: string;
     name: string;
     email: string;
@@ -21,12 +21,12 @@ const errorResponse = (statusCode: number, message: string): APIGatewayProxyResu
     body: JSON.stringify({ error: message }),
 });
 
-const saveToDynamoDB = async (item: Item) => {
+const saveToDynamoDB = async (item: DynamoDBItem) => {
     const params = {
-        TableName: tableName,
+        TableName: dynamoDBTableName,
         Item: item,
     };
-    return dynamoDB.put(params).promise();
+    return dynamoDBClient.put(params).promise();
 };
 
 const publishToSNS = async (name: string, email: string, telephone: string, message: string) => {
@@ -51,7 +51,7 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
         }
 
         const keyId = uuidv4();
-        const item: Item = { id: keyId, name, email, telephone, message };
+        const item: DynamoDBItem = { id: keyId, name, email, telephone, message };
 
         await saveToDynamoDB(item);
 

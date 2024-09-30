@@ -5,3 +5,4 @@ lambda/my-lambda-function/index.js
 dist
 packages
 .DS_Store
+coverage
